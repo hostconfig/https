@@ -5,6 +5,15 @@
   "license": "MIT",
   "private": true,
   "type": "module",
+  "scripts": {
+    "start": "yarn prod",
+    "build": "yarn clean && tsc && tsc-alias && ts-add-js-extension --dir=dist",
+    "dev": "NODE_ENV=development yarn build",
+    "prod": "NODE_ENV=production yarn build",
+    "clean": "rimraf dist",
+    "wipe": "yarn clean && rimraf node_modules",
+    "gen:ssl": "./generate.sh"
+  },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.6",
     "@types/debug": "^4.1.12",
@@ -21,6 +30,9 @@
     "express-validator": "^7.0.1",
     "http-errors": "^2.0.0",
     "https": "^1.0.0",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "rimraf": "^5.0.5",
+    "ts-add-js-extension": "^1.6.0",
+    "tsc-alias": "^1.8.8"
   }
 }
