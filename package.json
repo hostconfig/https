@@ -6,10 +6,13 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "serve": "node ./dist/index.js",
     "start": "yarn prod",
-    "build": "yarn clean && tsc && tsc-alias && ts-add-js-extension --dir=dist",
-    "dev": "NODE_ENV=development yarn build",
-    "prod": "NODE_ENV=production yarn build",
+    "restart": "NODE_ENV=production yarn rebuild && yarn serve",
+    "build": "tsc -p ./tsconfig.json && tsc-alias && ts-add-js-extension --dir=dist",
+    "rebuild": "yarn clean && tsc -p ./tsconfig.json && tsc-alias && ts-add-js-extension --dir=dist",
+    "dev": "NODE_ENV=development yarn serve",
+    "prod": "NODE_ENV=production yarn serve",
     "clean": "rimraf dist",
     "wipe": "yarn clean && rimraf node_modules",
     "gen:ssl": "./generate.sh"
