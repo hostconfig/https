@@ -5,18 +5,35 @@
   "license": "MIT",
   "private": true,
   "type": "module",
+  "readme": "https://github.com/hostconfig/https#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hostconfig/https.git"
+  },
+  "packageManager": "yarn@1.22.19",
+  "engines": {
+    "node": "~18.18.0"
+  },
   "scripts": {
     "build": "tsc -p ./tsconfig.json && tsc-alias && ts-add-js-extension --dir=dist",
-    "postbuild": "cp -r ./views ./dist/views && cp -r ./public ./dist/public",
+    "postbuild": "yarn copy:views && yarn copy:public && yarn copy:static",
     "rebuild": "yarn clean && yarn build",
     "dbg": "DEBUG=https:* yarn dev",
     "start": "yarn prod",
     "restart": "yarn rebuild && yarn prod",
     "dev": "NODE_ENV=development yarn serve",
     "prod": "NODE_ENV=production yarn serve",
-    "serve": "node ./dist/index.js",
+    "serve": "node ./dist/src/index.js",
     "clean": "rm -rvf ./dist",
     "wipe": "yarn clean && rm -rvf ./node_modules",
+    "copy:views": "cp -rv ./views ./dist/src/views",
+    "copy:public": "cp -rv ./public ./dist/src/public",
+    "copy:static": "cp -rv ./static ./dist/src/static",
+    "start-watch": "NODE_ENV=production nodemon dist/src/index.js --inspect=0.0.0.0:9229",
+    "start-wait-debugger": "NODE_ENV=production nodemon dist/src/index.js --inspect-brk=0.0.0.0:9229",
+    "test": "cross-env NODE_ENV=test PORT=8081 mocha --timeout 10000 --exit --inspect=0.0.0.0:9230",
+    "test-watch": "nodemon --exec \"yarn test\"",
+    "test-wait-debugger": "cross-env NODE_ENV=test PORT=8081 mocha --no-timeouts --exit --inspect-brk=0.0.0.0:9230",
     "gen:ssl": "./generate.sh"
   },
   "devDependencies": {
