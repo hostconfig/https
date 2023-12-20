@@ -31,7 +31,7 @@ const __dirname = new URL('.', import.meta.url).pathname // Will contain trailin
 const getKey = (key: string) => { try { return /* readFileSync( */ key /* ) */ } catch(err) { console.log(err); return '' } }
 const getCert = (cert: string) => { try { return /* readFileSync( */ cert /* ) */ } catch(err) { console.log(err); return '' } }
 
-const app = express()
+export const app = express()
 const debug = debugLib('https:server')
 const key = getKey(process?.env?.HOSTCONFIG_SSL_PRIVATE_KEY!)
 const cert = getCert(process?.env?.HOSTCONFIG_SSL_CERTIFICATE!)
@@ -51,7 +51,7 @@ app.use(cookieParser())
  * Get port from environment and store in Express.
  */
 
-const port = normalizePort(process?.env?.HOSTCONFIG_HTTPS_PORT || '443')
+const port = normalizePort(process?.env?.PORT || '443')
 app.set('port', port)
 
 /**
@@ -99,6 +99,13 @@ app.get('/', /* pathValidationRules, */ (req: Request, res: Response) => {
 
   res.render('index', { title: 'hostconfig/https' })
 })
+
+app.get("/health", function(req: Request, res: Response) {
+  // do app logic here to determine if app is truly healthy
+  // you should return 200 if healthy, and anything else will fail
+  // if you want, you should be able to restrict this to localhost (include ipv4 and ipv6)
+  res.send("I am happy and healthy\n");
+});
 
 /**
  * If requested route is not listed above, catch 404 and forward to error handler
@@ -196,3 +203,49 @@ function onListening() {
   debug('Listening on ' + bind)
   console.log(`https server running on https://localhost:${port}`)
 }
+
+/**
+ * Quit on ctrl-c when running docker in terminal
+ */
+
+process.on("SIGINT", function onSigint() {
+  console.info(
+    "Got SIGINT (aka ctrl-c in docker). Graceful shutdown ",
+    new Date().toISOString()
+  );
+  shutdown();
+});
+
+/**
+ * Quit properly on docker stop
+ */
+
+process.on("SIGTERM", function onSigterm() {
+  console.info(
+    "Got SIGTERM (docker container stop). Graceful shutdown ",
+    new Date().toISOString()
+  );
+  shutdown()
+})
+
+/**
+ * Shut down server
+ */
+
+function shutdown() {
+  server.close(function onServerClosed(err) {
+    if (err) {
+      console.error(err)
+      process.exit(1)
+    }
+    process.exit(0)
+  })
+}
+
+
+// need above in docker container to properly exit need this in docker
+// container to properly exit since node doesn't handle SIGINT/SIGTERM
+// this also won't work on using npm start since:
+// https://github.com/npm/npm/issues/4603
+// https://github.com/npm/npm/pull/10868
+// https://github.com/RisingStack/kubernetes-graceful-shutdown-example/blob/master/src/index.js

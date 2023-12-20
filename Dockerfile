@@ -12,7 +12,7 @@ ARG NODE_EXTRA_CA_CERTS=/etc/ssl/certs/ca-certificates.crt
 FROM node:${NODE_VERSION}-alpine as base
 
 # Set working directory for all build stages.
-WORKDIR /usr/src/app
+WORKDIR /usr/src/hostconfig/https
 
 
 ################################################################################
@@ -53,8 +53,8 @@ RUN yarn run build
 # where the necessary files are copied from the build stage.
 FROM base as final
 
-# Use production node environment by default.
-ENV NODE_ENV production
+# Don't use production node environment by default - this is set in 'yarn start'
+# ENV NODE_ENV production
 
 # Run the application as a non-root user.
 USER node
@@ -64,15 +64,26 @@ COPY package.json .
 
 # Copy the production dependencies from the deps stage and also
 # the built application from the build stage into the image.
-COPY --from=deps /usr/src/app/node_modules ./node_modules
-COPY --from=build /usr/src/app/dist ./dist
+COPY --from=deps /usr/src/hostconfig/https/node_modules ./node_modules
+COPY --from=build /usr/src/hostconfig/https/dist ./dist
 
 # Files to be built
 COPY tsconfig.json .
 COPY index.ts .
 
+# check every 30s to ensure this service returns HTTP 200
+HEALTHCHECK --interval=30s \
+  CMD node dist/test/healthcheck.js
+
 # Expose the port that the application listens on.
-EXPOSE 443
+# Default to port 80 for node, and 9229 and 9230 (tests) for debug
+ARG PORT=443
+ENV PORT $PORT
+EXPOSE $PORT
+# 9229 9230
 
 # Run the application.
 CMD yarn start
+
+# Alternatively, run the debugger
+# CMD yarn dbg
