@@ -16,27 +16,27 @@
   },
   "scripts": {
     "build": "tsc -p ./tsconfig.json && tsc-alias && ts-add-js-extension --dir=dist",
-    "postbuild": "yarn copy:views && yarn copy:public && yarn copy:static",
+    "postbuild": "yarn copy:views",
     "rebuild": "yarn clean && yarn build",
     "dbg": "DEBUG=https:* yarn dev",
     "start": "yarn prod",
     "restart": "yarn rebuild && yarn prod",
     "dev": "NODE_ENV=development yarn serve",
     "prod": "NODE_ENV=production yarn serve",
-    "serve": "node ./dist/src/index.js",
+    "serve": "node ./dist/index.js",
     "clean": "rm -rvf ./dist",
     "wipe": "yarn clean && rm -rvf ./node_modules",
-    "copy:views": "cp -rv ./views ./dist/src/views",
-    "copy:public": "cp -rv ./public ./dist/src/public",
-    "copy:static": "cp -rv ./static ./dist/src/static",
-    "start-watch": "NODE_ENV=production nodemon dist/src/index.js --inspect=0.0.0.0:9229",
-    "start-wait-debugger": "NODE_ENV=production nodemon dist/src/index.js --inspect-brk=0.0.0.0:9229",
+    "copy:views": "cp -rv ./views ./dist/views",
+    "copy:types": "cp -rv ./src/index.d.ts ./dist/index.d.ts",
+    "start-watch": "NODE_ENV=production nodemon dist/index.js --inspect=0.0.0.0:9229",
+    "start-wait-debugger": "NODE_ENV=production nodemon dist/index.js --inspect-brk=0.0.0.0:9229",
     "test": "cross-env NODE_ENV=test PORT=8081 mocha --timeout 10000 --exit --inspect=0.0.0.0:9230",
     "test-watch": "nodemon --exec \"yarn test\"",
     "test-wait-debugger": "cross-env NODE_ENV=test PORT=8081 mocha --no-timeouts --exit --inspect-brk=0.0.0.0:9230",
     "gen:ssl": "./generate.sh"
   },
   "devDependencies": {
+    "@hostconfig/app": "https://github.com/hostconfig/app",
     "@types/cookie-parser": "^1.4.6",
     "@types/debug": "^4.1.12",
     "@types/express": "^4.17.21",
@@ -63,5 +63,9 @@
     "rimraf": "^5.0.5",
     "ts-add-js-extension": "^1.6.0",
     "tsc-alias": "^1.8.8"
-  }
+  },
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "types": "./dist/index.d.ts"
 }

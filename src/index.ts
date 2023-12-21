@@ -4,16 +4,18 @@
  * Module dependencies.
  */
 
-import express, { Request, Response, NextFunction, Router } from 'express'
+import { Request, Response, NextFunction, Router } from 'express'
 // import { body, header, validationResult } from 'express-validator'
-import { readFileSync } from 'fs'
+// import { readFileSync } from 'fs'
 import debugLib from 'debug'
 import https from 'https'
 import createError from 'http-errors'
 import { URL } from 'url'
-import path from 'path'
-import cookieParser from 'cookie-parser'
-import logger from 'morgan'
+// import path from 'path'
+// import cookieParser from 'cookie-parser'
+// import logger from 'morgan'
+
+import { app } from '@hostconfig/app'
 
 type Route = {
   path: string;
@@ -31,19 +33,19 @@ const __dirname = new URL('.', import.meta.url).pathname // Will contain trailin
 const getKey = (key: string) => { try { return /* readFileSync( */ key /* ) */ } catch(err) { console.log(err); return '' } }
 const getCert = (cert: string) => { try { return /* readFileSync( */ cert /* ) */ } catch(err) { console.log(err); return '' } }
 
-export const app = express()
-const debug = debugLib('https:server')
+// export const app = express()
+const debug = debugLib('hostconfig:https')
 const key = getKey(process?.env?.HOSTCONFIG_SSL_PRIVATE_KEY!)
 const cert = getCert(process?.env?.HOSTCONFIG_SSL_CERTIFICATE!)
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'))
-app.set('view engine', 'pug')
+// // view engine setup
+// app.set('views', path.join(__dirname, 'views'))
+// app.set('view engine', 'pug')
 
-app.use(logger('dev'))
-app.use(express.json())
-app.use(express.urlencoded({ extended: false }))
-app.use(cookieParser())
+// app.use(logger('dev'))
+// app.use(express.json())
+// app.use(express.urlencoded({ extended: false }))
+// app.use(cookieParser())
 // app.use(express.static(path.join(__dirname, 'public')))
 // app.use(express.static(path.join(__dirname, 'static')))
 
@@ -250,3 +252,5 @@ function shutdown() {
 // https://github.com/npm/npm/issues/4603
 // https://github.com/npm/npm/pull/10868
 // https://github.com/RisingStack/kubernetes-graceful-shutdown-example/blob/master/src/index.js
+
+export default server
