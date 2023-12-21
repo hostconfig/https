@@ -1,6 +1,87 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+:root {
+  --custom-font-size: calc((15.00px + 0.390625vw) * (15.00 / 18.00));
+  --custom-font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    'Fira Sans',
+    'Droid Sans',
+    'Helvetica Neue',
+    sans-serif;
+
+
+
+}
+
+@media (prefers-color-scheme: light) or (prefers-color-scheme: no-preference) {
+  :root {
+    --custom-color: hsl(0, 0%, 0%);
+    --custom-bg-color: hsl(0, 0%, 100%);
+    --custom-color-dull: hsla(0, 0%, 0%, 50%);
+    --custom-color-glow: hsl(180, 100%, 50%);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+
+    --custom-color: hsl(0, 0%, 100%);
+    --custom-bg-color: hsl(0, 0%, 0%);
+    --custom-color-dull: hsla(0, 0%, 100%, 50%);
+    --custom-color-glow: hsl(180, 100%, 50%);
+  }
+}
+
+.animate-in {
+  animation: animateIn 0.3s ease 0.15s both;
+}
+
+@keyframes animateIn {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+html, body {
+  padding: 0;
+  margin: 0;
+}
+
+html, body {
+	font-family: var(--custom-font-family);
+	background-color: var(--custom-bg-color);
+  color: var(--custom-color);
+}
+html.dark-mode, body.dark-mode {
+	font-family: var(--custom-font-family);
+	background-color: var(--custom-bg-color);
+  color: var(--custom-color);
+}
+
+html,
+body,
+#root {
+	font-size: var(--custom-font-size);
+  height: 100vh;
+  width: 100vw;
+  overflow-x: hidden;
+}
+
+* {
+  color: var(--custom-color);
+  background-color: var(--background);
+	font-size: var(--custom-font-size);
+  font-family: var(--custom-font-family);
+  box-sizing: border-box;
 }
 
 a {
