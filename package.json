@@ -64,6 +64,11 @@
     "ts-add-js-extension": "^1.6.0",
     "tsc-alias": "^1.8.8"
   },
+  "files": [
+    "dist/**",
+    "!dist/**/*.map",
+    "!dist/**/*.spec.*"
+  ],
   "exports": {
     ".": "./dist/index.js"
   },
