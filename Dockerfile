@@ -26,7 +26,10 @@ FROM base as deps
 RUN --mount=type=bind,source=package.json,target=package.json \
     --mount=type=bind,source=yarn.lock,target=yarn.lock \
     --mount=type=bind,source=tsconfig.json,target=tsconfig.json \
-    --mount=type=bind,source=index.ts,target=index.ts \
+    --mount=type=bind,source=src/index.ts,target=src/index.ts \
+    --mount=type=bind,source=src/index.d.ts,target=src/index.d.ts \
+    --mount=type=bind,source=src/test/healthcheck.ts,target=src/test/healthcheck.ts \
+    --mount=type=bind,source=src/test/sample.ts,target=src/test/sample.ts \
     --mount=type=cache,target=/root/.yarn \
     yarn install --production --frozen-lockfile
 
@@ -39,9 +42,12 @@ FROM deps as build
 RUN --mount=type=bind,source=package.json,target=package.json \
     --mount=type=bind,source=yarn.lock,target=yarn.lock \
     --mount=type=bind,source=tsconfig.json,target=tsconfig.json \
-    --mount=type=bind,source=index.ts,target=index.ts \
+    --mount=type=bind,source=src/index.ts,target=src/index.ts \
+    --mount=type=bind,source=src/index.d.ts,target=src/index.d.ts \
+    --mount=type=bind,source=src/test/healthcheck.ts,target=src/test/healthcheck.ts \
+    --mount=type=bind,source=src/test/sample.ts,target=src/test/sample.ts \
     --mount=type=cache,target=/root/.yarn \
-    yarn install --frozen-lockfile
+    yarn install --production --frozen-lockfile
 
 # Copy the rest of the source files into the image.
 COPY . .
