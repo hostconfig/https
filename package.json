@@ -18,6 +18,7 @@
     "build": "tsc -p ./tsconfig.json && tsc-alias && ts-add-js-extension --dir=dist",
     "postbuild": "yarn copy:views",
     "rebuild": "yarn clean && yarn build",
+    "postinstall": "yarn build",
     "dbg": "DEBUG=https:* yarn dev",
     "start": "yarn prod",
     "restart": "yarn rebuild && yarn prod",
@@ -27,7 +28,6 @@
     "clean": "rm -rvf ./dist",
     "wipe": "yarn clean && rm -rvf ./node_modules",
     "copy:views": "cp -rv ./views ./dist/views",
-    "copy:types": "cp -rv ./src/index.d.ts ./dist/index.d.ts",
     "start-watch": "NODE_ENV=production nodemon dist/index.js --inspect=0.0.0.0:9229",
     "start-wait-debugger": "NODE_ENV=production nodemon dist/index.js --inspect-brk=0.0.0.0:9229",
     "test": "cross-env NODE_ENV=test PORT=8081 mocha --timeout 10000 --exit --inspect=0.0.0.0:9230",
@@ -36,7 +36,6 @@
     "gen:ssl": "./generate.sh"
   },
   "devDependencies": {
-    "@hostconfig/app": "https://github.com/hostconfig/app",
     "@types/cookie-parser": "^1.4.6",
     "@types/debug": "^4.1.12",
     "@types/express": "^4.17.21",
@@ -51,6 +50,7 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
+    "@hostconfig/app": "https://github.com/hostconfig/app",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "debug": "^4.3.4",
