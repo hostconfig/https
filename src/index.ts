@@ -15,7 +15,7 @@ import { URL } from 'url'
 // import cookieParser from 'cookie-parser'
 // import logger from 'morgan'
 
-import { app } from '@hostconfig/app'
+import app from '@hostconfig/app'
 
 type Route = {
   path: string;
