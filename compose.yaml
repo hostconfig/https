@@ -8,9 +8,10 @@ services:
     build:
       context: .
     environment:
+      MUST_BE_A_MAPPING: true
 #      NODE_ENV: production
     ports:
       - 443:443
-    networks:
-      - public
-      - private
+    # networks:
+    #   - public
+    #   - private

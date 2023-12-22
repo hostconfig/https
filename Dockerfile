@@ -15,6 +15,18 @@ FROM node:${NODE_VERSION}-alpine as base
 WORKDIR /usr/src/hostconfig/https
 
 
+RUN <<EOF
+apk update
+apk add --no-interactive git
+EOF
+
+# RUN <<EOF
+# useradd -s /bin/bash -m vscode
+# groupadd docker
+# usermod -aG docker vscode
+# EOF
+
+
 ################################################################################
 # Create a stage for installing production dependecies.
 FROM base as deps
@@ -30,8 +42,12 @@ RUN --mount=type=bind,source=package.json,target=package.json \
     --mount=type=bind,source=src/index.d.ts,target=src/index.d.ts \
     --mount=type=bind,source=src/test/healthcheck.ts,target=src/test/healthcheck.ts \
     --mount=type=bind,source=src/test/sample.ts,target=src/test/sample.ts \
+    --mount=type=bind,source=views/error.pug,target=views/error.pug \
+    --mount=type=bind,source=views/index.pug,target=views/index.pug \
+    --mount=type=bind,source=views/user.pug,target=views/user.pug \
+    --mount=type=bind,source=views/layout.pug,target=views/layout.pug \
     --mount=type=cache,target=/root/.yarn \
-    yarn install --production --frozen-lockfile
+    yarn install --frozen-lockfile
 
 ################################################################################
 # Create a stage for building the application.
@@ -46,11 +62,17 @@ RUN --mount=type=bind,source=package.json,target=package.json \
     --mount=type=bind,source=src/index.d.ts,target=src/index.d.ts \
     --mount=type=bind,source=src/test/healthcheck.ts,target=src/test/healthcheck.ts \
     --mount=type=bind,source=src/test/sample.ts,target=src/test/sample.ts \
+    --mount=type=bind,source=views/error.pug,target=views/error.pug \
+    --mount=type=bind,source=views/index.pug,target=views/index.pug \
+    --mount=type=bind,source=views/user.pug,target=views/user.pug \
+    --mount=type=bind,source=views/layout.pug,target=views/layout.pug \
     --mount=type=cache,target=/root/.yarn \
-    yarn install --production --frozen-lockfile
+    yarn install --frozen-lockfile
 
 # Copy the rest of the source files into the image.
 COPY . .
+COPY views ./views
+
 # Run the build script.
 RUN yarn run build
 
@@ -75,7 +97,9 @@ COPY --from=build /usr/src/hostconfig/https/dist ./dist
 
 # Files to be built
 COPY tsconfig.json .
-COPY index.ts .
+COPY src ./src
+# COPY test ./test
+# COPY views ./views
 
 # check every 30s to ensure this service returns HTTP 200
 HEALTHCHECK --interval=30s \
