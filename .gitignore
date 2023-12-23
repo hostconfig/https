@@ -85,6 +85,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # custom
+.certs
 dist
 out
 

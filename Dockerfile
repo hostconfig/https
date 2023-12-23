@@ -49,6 +49,16 @@ RUN --mount=type=bind,source=package.json,target=package.json \
     --mount=type=cache,target=/root/.yarn \
     yarn install --frozen-lockfile
 
+RUN --mount=type=bind,source=.certs/CA/CA.key,target=.certs/CA/CA.key \
+    --mount=type=bind,source=.certs/CA/CA.pem,target=.certs/CA/CA.pem \
+    --mount=type=bind,source=.certs/CA/localhost/localhost.key,target=.certs/CA/localhost/localhost.key \
+    --mount=type=bind,source=.certs/CA/localhost/localhost.decrypted.key,target=.certs/CA/localhost/localhost.decrypted.key \
+    --mount=type=bind,source=.certs/CA/localhost/localhost.ext,target=.certs/CA/localhost/localhost.ext \
+    --mount=type=bind,source=.certs/CA/localhost/localhost.csr,target=.certs/CA/localhost/localhost.csr \
+    --mount=type=bind,source=.certs/CA/localhost/localhost.crt,target=.certs/CA/localhost/localhost.crt \
+    --mount=type=cache,target=/root/.certs \
+    /bin/cp -rvf .certs node_modules/@hostconfig/.certs
+
 ################################################################################
 # Create a stage for building the application.
 FROM deps as build
@@ -69,12 +79,29 @@ RUN --mount=type=bind,source=package.json,target=package.json \
     --mount=type=cache,target=/root/.yarn \
     yarn install --frozen-lockfile
 
+RUN --mount=type=bind,source=.certs/CA/CA.key,target=.certs/CA/CA.key \
+    --mount=type=bind,source=.certs/CA/CA.pem,target=.certs/CA/CA.pem \
+    --mount=type=bind,source=.certs/CA/localhost/localhost.key,target=.certs/CA/localhost/localhost.key \
+    --mount=type=bind,source=.certs/CA/localhost/localhost.decrypted.key,target=.certs/CA/localhost/localhost.decrypted.key \
+    --mount=type=bind,source=.certs/CA/localhost/localhost.ext,target=.certs/CA/localhost/localhost.ext \
+    --mount=type=bind,source=.certs/CA/localhost/localhost.csr,target=.certs/CA/localhost/localhost.csr \
+    --mount=type=bind,source=.certs/CA/localhost/localhost.crt,target=.certs/CA/localhost/localhost.crt \
+    --mount=type=cache,target=/root/.certs \
+    /bin/cp -rvf .certs node_modules/@hostconfig/.certs
+
 # Copy the rest of the source files into the image.
 COPY . .
 COPY views ./views
 
 # Run the build script.
 RUN yarn run build
+
+RUN chown node .certs/CA/localhost/localhost.decrypted.key
+RUN cp -rvf .certs ./dist/.certs
+
+RUN cp -rvf .certs/CA/localhost/localhost.crt /usr/local/share/ca-certificates/localhost.crt
+RUN update-ca-certificates
+
 
 ################################################################################
 # Create a new stage to run the application with minimal runtime dependencies
@@ -94,6 +121,8 @@ COPY package.json .
 # the built application from the build stage into the image.
 COPY --from=deps /usr/src/hostconfig/https/node_modules ./node_modules
 COPY --from=build /usr/src/hostconfig/https/dist ./dist
+
+COPY --from=build /usr/src/hostconfig/https/.certs ./dist/.certs
 
 # Files to be built
 COPY tsconfig.json .
@@ -117,3 +146,5 @@ CMD yarn start
 
 # Alternatively, run the debugger
 # CMD yarn dbg
+
+# CMD ls -la ./dist/

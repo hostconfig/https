@@ -6,12 +6,12 @@
 
 import { Request, Response, NextFunction, Router } from 'express'
 // import { body, header, validationResult } from 'express-validator'
-// import { readFileSync } from 'fs'
+import { readFileSync } from 'fs'
 import debugLib from 'debug'
 import https from 'https'
 import createError from 'http-errors'
 import { URL } from 'url'
-// import path from 'path'
+import path from 'path'
 // import cookieParser from 'cookie-parser'
 // import logger from 'morgan'
 
@@ -27,16 +27,16 @@ type Routes = Route[]
 const __filename = new URL('', import.meta.url).pathname
 const __dirname = new URL('.', import.meta.url).pathname // Will contain trailing slash
 
-// const key = readFileSync('../../../certs/CA/localhost/localhost.decrypted.key');
-// const cert = readFileSync('../../../certs/CA/localhost/localhost.crt');
-
-const getKey = (key: string) => { try { return /* readFileSync( */ key /* ) */ } catch(err) { console.log(err); return '' } }
-const getCert = (cert: string) => { try { return /* readFileSync( */ cert /* ) */ } catch(err) { console.log(err); return '' } }
+const getKey = (key: string) => { try { return readFileSync(key) } catch(err) { console.log(err); return '' } }
+const getCert = (cert: string) => { try { return readFileSync(cert) } catch(err) { console.log(err); return '' } }
 
 // export const app = express()
 const debug = debugLib('hostconfig:https')
-const key = getKey(process?.env?.HOSTCONFIG_SSL_PRIVATE_KEY!)
-const cert = getCert(process?.env?.HOSTCONFIG_SSL_CERTIFICATE!)
+
+const key = getKey(path.join(__dirname,'.certs/CA/localhost/localhost.decrypted.key'));
+const cert = getCert(path.join(__dirname, '.certs/CA/localhost/localhost.crt'));
+// const key = getKey(process?.env?.HOSTCONFIG_SSL_PRIVATE_KEY!)
+// const cert = getCert(process?.env?.HOSTCONFIG_SSL_CERTIFICATE!)
 
 // // view engine setup
 // app.set('views', path.join(__dirname, 'views'))
