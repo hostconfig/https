@@ -146,5 +146,3 @@ CMD yarn start
 
 # Alternatively, run the debugger
 # CMD yarn dbg
-
-# CMD ls -la ./dist/
