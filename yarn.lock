@@ -28,7 +28,7 @@
 
 "@hostconfig/app@https://github.com/hostconfig/app":
   version "0.0.0"
-  resolved "https://github.com/hostconfig/app#172fd1e257479b2eec4fa05a38019637fe4a2987"
+  resolved "https://github.com/hostconfig/app#bd0c56d22a3c5c9a3a86e0c099c5d16c3d21e913"
   dependencies:
     cookie-parser "^1.4.6"
     cors "^2.8.5"
